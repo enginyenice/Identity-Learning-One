@@ -1,4 +1,5 @@
-﻿using IdentityTutorial.Tutorial_One.Models;
+﻿using IdentityTutorial.Tutorial_One.CustomValidation;
+using IdentityTutorial.Tutorial_One.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -32,7 +33,8 @@ namespace IdentityTutorial.Tutorial_One
 
                 options.UseSqlServer(Configuration.GetConnectionString("SqlServer"));
             });
-            services.AddIdentity<AppUser,AppRole>(options => {
+            services.AddIdentity<AppUser, AppRole>(options =>
+            {
                 options.Password.RequiredLength = 4; // En az 4 karakter olmalı
                 options.Password.RequireNonAlphanumeric = false; // Alfanumeric karakter girmesine gerek yok (*.?-....)
                 options.Password.RequireLowercase = false; // Küçük karakter girme zorunluluğuna gerek yok
@@ -40,7 +42,8 @@ namespace IdentityTutorial.Tutorial_One
                 options.Password.RequireDigit = false;  // Sayı girme zorunluluğuna gerek yok
 
             })
-                    .AddEntityFrameworkStores<AppIdentityDbContext>();
+                .AddPasswordValidator<CustomPasswordValidator>()//Custom password validator ekledik
+                .AddEntityFrameworkStores<AppIdentityDbContext>();
 
         }
 
