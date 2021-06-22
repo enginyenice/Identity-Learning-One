@@ -39,8 +39,9 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public IActionResult LogIn()
+        public IActionResult LogIn(string ReturnUrl)
         {
+            TempData["ReturnUrl"] = ReturnUrl;
             return View();
         }
 
@@ -57,10 +58,14 @@ namespace IdentityTutorial.Tutorial_One.Controllers
                     //Eski bir cookie varsa silelim
                     await _signInManager.SignOutAsync();
 
-                    Microsoft.AspNetCore.Identity.SignInResult signInResult = await _signInManager.PasswordSignInAsync(appUser, user.Password, false, false);
+                    Microsoft.AspNetCore.Identity.SignInResult signInResult = await _signInManager.PasswordSignInAsync(appUser, user.Password, user.RememberMe, false);
 
                     if (signInResult.Succeeded)
                     {
+                        if(TempData["ReturnUrl"] != null)
+                        {
+                            return Redirect(TempData["ReturnUrl"].ToString());
+                        }
                         return RedirectToAction(actionName:"Index",routeValues:"Member");
                     }
                 }
@@ -68,9 +73,7 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             {
                 ModelState.AddModelError("", "Geçersiz email adresi veya şifresi");
             }
-
-
-            return View();
+            return View(user);
         }
 
 

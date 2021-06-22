@@ -16,5 +16,7 @@ namespace IdentityTutorial.Tutorial_One.ViewModels
         [DataType(DataType.Password)]
         [MinLength(4,ErrorMessage ="Şifreniz en az 4 karakterden oluşmalıdır")]
         public string Password { get; set; }
+        [Display(Name = "Beni hatırla")]
+        public bool RememberMe { get; set; }
     }
 }
