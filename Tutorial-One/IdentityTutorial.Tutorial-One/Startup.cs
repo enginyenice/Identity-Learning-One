@@ -2,6 +2,7 @@
 using IdentityTutorial.Tutorial_One.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,32 @@ namespace IdentityTutorial.Tutorial_One
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+
+
+            CookieBuilder cookieBuilder = new CookieBuilder();
+            cookieBuilder.Name = "MyBlog"; //Cookie ismi
+            cookieBuilder.HttpOnly = false; //Client side tarafında erişilemesin
+            cookieBuilder.Expiration = System.TimeSpan.FromDays(60); //Kaç gün kalmasını istiyoruz.
+            cookieBuilder.SameSite = SameSiteMode.Lax; // Sadece o site üzerinden ulaşabilirim. (Strict kapatmış olurum) (Lax ayarı kısmış olurum) (None kapatmış olurum) (CSRF ataklarını engellemek için Strict yapılabilir.) Kritik bilgiler taşıyorsan Strict yapabilirsin. (Para transferi vs...)
+            cookieBuilder.SecurePolicy = CookieSecurePolicy.SameAsRequest; //Kullanıcı login olduğu zaman cookie oluşurken bu cookienin https üzerinden gönderiliyor.
+                                                                           //| Always : eğer browser'a istek sadece https üzerinden gelmişse cookie değerini gönderiyor
+                                                                           //| SameAsRequest: Http den gelmişse httpden https den gelmişse https den cookie bilgisini gönderiyor.
+                                                                           //| None nerden gösterirseniz gönderin http üzerinden cookie gönderiyor.
+
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = new PathString("/Home/Login"); //Kullanıcıların göreceği bir sayfaya cookiesiz bir istek geldiğinde nereye yönlendirileceğini belirtiyoruz.
+                options.Cookie = cookieBuilder; // Tasarladığımız cookieBuilder'i verdik
+                options.SlidingExpiration = true;//Kullanıcıya verdiğimiz cookie nin ömrünü vermiştik.
+                                                 //|SlidingExpiration = true kullanıcı cookieBuilder.Expiration tarihinin yarısa geldiğinde tekrar Expiration kadar gün cookie oluşturma isteği verir.
+                                                 //|-->Örneğin: 60 / 2 = 30. gün siteye girdiğinde 60 günlük daha cookie oluşturur.
+                                                 //|SlidingExpiration = false cookie ömrü otomatik uzatılmaz.
+                
+
+            });
+
             services.AddControllersWithViews();
             services.AddDbContext<AppIdentityDbContext>(options =>
             {
