@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IdentityTutorial.Tutorial_One.Models
 {
-    public class AppIdentityDbContext : IdentityDbContext
+    public class AppIdentityDbContext : IdentityDbContext<AppUser,AppRole,string>
     {
         public AppIdentityDbContext(DbContextOptions<AppIdentityDbContext> options) : base(options)
         {

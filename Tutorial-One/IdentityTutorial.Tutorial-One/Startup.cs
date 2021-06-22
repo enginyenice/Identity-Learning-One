@@ -32,7 +32,7 @@ namespace IdentityTutorial.Tutorial_One
 
                 options.UseSqlServer(Configuration.GetConnectionString("SqlServer"));
             });
-            services.AddIdentity<AppUser,IdentityRole >()
+            services.AddIdentity<AppUser,AppRole>()
                     .AddEntityFrameworkStores<AppIdentityDbContext>();
 
         }

@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace IdentityTutorial.Tutorial_One.Models
 {
-    public class AppUser : IdentityUser
+    public class AppRole : IdentityRole
     {
-        //public string City { get; set; }
-        //public string Picture { get; set; }
-
+        //public string RoleType { get; set; }
     }
 }
