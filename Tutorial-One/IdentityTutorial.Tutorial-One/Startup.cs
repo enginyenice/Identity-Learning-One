@@ -34,7 +34,7 @@ namespace IdentityTutorial.Tutorial_One
             CookieBuilder cookieBuilder = new CookieBuilder();
             cookieBuilder.Name = "MyBlog"; //Cookie ismi
             cookieBuilder.HttpOnly = false; //Client side tarafında erişilemesin
-            cookieBuilder.Expiration = System.TimeSpan.FromDays(60); //Kaç gün kalmasını istiyoruz.
+            //cookieBuilder.Expiration = System.TimeSpan.FromDays(60); //Kaç gün kalmasını istiyoruz.
             cookieBuilder.SameSite = SameSiteMode.Lax; // Sadece o site üzerinden ulaşabilirim. (Strict kapatmış olurum) (Lax ayarı kısmış olurum) (None kapatmış olurum) (CSRF ataklarını engellemek için Strict yapılabilir.) Kritik bilgiler taşıyorsan Strict yapabilirsin. (Para transferi vs...)
             cookieBuilder.SecurePolicy = CookieSecurePolicy.SameAsRequest; //Kullanıcı login olduğu zaman cookie oluşurken bu cookienin https üzerinden gönderiliyor.
                                                                            //| Always : eğer browser'a istek sadece https üzerinden gelmişse cookie değerini gönderiyor
@@ -44,7 +44,7 @@ namespace IdentityTutorial.Tutorial_One
 
             services.ConfigureApplicationCookie(options =>
             {
-                options.LoginPath = new PathString("/Home/Login"); //Kullanıcıların göreceği bir sayfaya cookiesiz bir istek geldiğinde nereye yönlendirileceğini belirtiyoruz.
+                options.LoginPath = new PathString("/Home/LogIn"); //Kullanıcıların göreceği bir sayfaya cookiesiz bir istek geldiğinde nereye yönlendirileceğini belirtiyoruz.
                 options.Cookie = cookieBuilder; // Tasarladığımız cookieBuilder'i verdik
                 options.SlidingExpiration = true;//Kullanıcıya verdiğimiz cookie nin ömrünü vermiştik.
                                                  //|SlidingExpiration = true kullanıcı cookieBuilder.Expiration tarihinin yarısa geldiğinde tekrar Expiration kadar gün cookie oluşturma isteği verir.

@@ -15,10 +15,12 @@ namespace IdentityTutorial.Tutorial_One.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly UserManager<AppUser> _userManager;
-        public HomeController(ILogger<HomeController> logger, UserManager<AppUser> userManager)
+        private readonly SignInManager<AppUser> _signInManager;
+        public HomeController(ILogger<HomeController> logger, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             _logger = logger;
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         public IActionResult Index()
@@ -42,6 +44,36 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             return View();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> LogIn(LoginViewModel user)
+        {
+
+            if (ModelState.IsValid)
+            {
+                AppUser appUser = await _userManager.FindByEmailAsync(user.Email);
+                if (appUser != null)
+                {
+
+                    //Eski bir cookie varsa silelim
+                    await _signInManager.SignOutAsync();
+
+                    Microsoft.AspNetCore.Identity.SignInResult signInResult = await _signInManager.PasswordSignInAsync(appUser, user.Password, false, false);
+
+                    if (signInResult.Succeeded)
+                    {
+                        return RedirectToAction(actionName:"Index",routeValues:"Member");
+                    }
+                }
+            }else
+            {
+                ModelState.AddModelError("", "Geçersiz email adresi veya şifresi");
+            }
+
+
+            return View();
+        }
+
+
         public IActionResult SignUp()
         {
             return View();
@@ -56,11 +88,12 @@ namespace IdentityTutorial.Tutorial_One.Controllers
                 appUser.UserName = user.UserName;
                 appUser.Email = user.Email;
                 appUser.PhoneNumber = user.PhoneNumber;
-                IdentityResult identityResult =  await _userManager.CreateAsync(appUser, user.Password);
+                IdentityResult identityResult = await _userManager.CreateAsync(appUser, user.Password);
                 if (identityResult.Succeeded)
                 {
                     return RedirectToAction("LogIn");
-                } else
+                }
+                else
                 {
                     foreach (IdentityError errorItem in identityResult.Errors)
                     {
