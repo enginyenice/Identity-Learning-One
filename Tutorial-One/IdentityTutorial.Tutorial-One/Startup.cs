@@ -36,6 +36,7 @@ namespace IdentityTutorial.Tutorial_One
             services.AddIdentity<AppUser, AppRole>(options =>
             {
 
+                //User Default Validaton
                 options.User.RequireUniqueEmail = true; //Uniq email olsun
                 options.User.AllowedUserNameCharacters = "abcçdefgğhıijklmnoöpqrstuüvwxyzABCÇDEFGĞHIİJKLMNOÖPQRSŞTUÜVWXYZ0123456789-._"; //Kullanıcı adında hangi karakterler girilebilir. Defualt: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+
 
@@ -49,6 +50,7 @@ namespace IdentityTutorial.Tutorial_One
 
             })
                 .AddPasswordValidator<CustomPasswordValidator>()//Custom password validator ekledik
+                .AddUserValidator<CustomUserValidator>()//Custom user validator ekledik.
                 .AddEntityFrameworkStores<AppIdentityDbContext>();
 
         }
