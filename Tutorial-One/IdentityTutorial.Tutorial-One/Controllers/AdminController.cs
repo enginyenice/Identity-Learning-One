@@ -1,4 +1,5 @@
 ﻿using IdentityTutorial.Tutorial_One.Models;
+using IdentityTutorial.Tutorial_One.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
