@@ -51,6 +51,7 @@ namespace IdentityTutorial.Tutorial_One
             })
                 .AddPasswordValidator<CustomPasswordValidator>()//Custom password validator ekledik
                 .AddUserValidator<CustomUserValidator>()//Custom user validator ekledik.
+                .AddErrorDescriber<CustomIdentityErrorDescriber>() //Hata mesajlarını özelleştirmek.
                 .AddEntityFrameworkStores<AppIdentityDbContext>();
 
         }
