@@ -35,6 +35,12 @@ namespace IdentityTutorial.Tutorial_One
             });
             services.AddIdentity<AppUser, AppRole>(options =>
             {
+
+                options.User.RequireUniqueEmail = true; //Uniq email olsun
+                options.User.AllowedUserNameCharacters = "abcçdefgğhıijklmnoöpqrstuüvwxyzABCÇDEFGĞHIİJKLMNOÖPQRSŞTUÜVWXYZ0123456789-._"; //Kullanıcı adında hangi karakterler girilebilir. Defualt: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+
+
+
+                //Password Default Validaton
                 options.Password.RequiredLength = 4; // En az 4 karakter olmalı
                 options.Password.RequireNonAlphanumeric = false; // Alfanumeric karakter girmesine gerek yok (*.?-....)
                 options.Password.RequireLowercase = false; // Küçük karakter girme zorunluluğuna gerek yok

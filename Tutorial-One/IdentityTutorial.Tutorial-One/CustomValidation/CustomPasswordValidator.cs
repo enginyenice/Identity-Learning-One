@@ -15,11 +15,14 @@ namespace IdentityTutorial.Tutorial_One.CustomValidation
 
             if (password.ToLower().Contains(user.UserName.ToLower()))
             {
-                errors.Add(new IdentityError()
+                if (!user.UserName.ToLower().Contains(user.Email.ToLower()))
                 {
-                    Code = "PasswordContainsUserName",
-                    Description = "Şifre kullanıcı adı içeremez"
-                });
+                    errors.Add(new IdentityError()
+                    {
+                        Code = "PasswordContainsUserName",
+                        Description = "Şifre kullanıcı adı içeremez"
+                    });
+                }
             }
             if (password.ToLower().Contains("1234"))
             {
