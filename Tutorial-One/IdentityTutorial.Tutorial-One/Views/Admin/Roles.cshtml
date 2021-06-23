@@ -13,6 +13,7 @@
         <tr>
             <th>Id</th>
             <th>Role</th>
+            <th>Düzenle</th>
             <th>Sil</th>
         </tr>
     </thead>
@@ -22,6 +23,7 @@
             <tr>
                 <td>@item.Id</td>
                 <td>@item.Name</td>
+                <td><a asp-action="RoleUpdate" asp-route-id="@item.Id" class="btn btn-warning">Güncelle</a></td>
                 <td>
                     <form asp-route-id="@item.Id" asp-action="RoleDelete" method="post">
                         <button class="btn btn-info" type="submit">Sil</button>

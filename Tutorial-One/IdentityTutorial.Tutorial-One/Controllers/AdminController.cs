@@ -1,5 +1,6 @@
 ﻿using IdentityTutorial.Tutorial_One.Models;
 using IdentityTutorial.Tutorial_One.ViewModels;
+using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -65,5 +66,40 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             }
             return RedirectToAction("Roles");
         }
+    
+        public IActionResult RoleUpdate(string id)
+        {
+            AppRole appRole = _roleManager.FindByIdAsync(id).Result;
+            if(appRole == null)
+            {
+                return RedirectToAction("Roles");
+            }
+            RoleViewModel roleViewModel = appRole.Adapt<RoleViewModel>();
+            return View(roleViewModel);
+        }
+        [HttpPost]
+        public IActionResult RoleUpdate(RoleViewModel roleViewModel)
+        {
+            AppRole appRole = _roleManager.FindByIdAsync(roleViewModel.Id).Result;
+
+            if(appRole != null)
+            {
+                appRole.Name = roleViewModel.Name;
+                IdentityResult result = _roleManager.UpdateAsync(appRole).Result;
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Roles");
+                } else
+                {
+                    AddModelError(result);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Güncelleme işlemi başarısız oldu");
+            }
+            return View(roleViewModel);
+        }
+
     }
 }
