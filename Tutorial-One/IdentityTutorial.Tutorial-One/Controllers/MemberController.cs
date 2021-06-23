@@ -29,5 +29,50 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             UserViewModel userViewModel = appUser.Adapt<UserViewModel>(); // AppUser ı UserViewModel Mappledik. (Mapster paketi kullandık)
             return View(userViewModel);
         }
+        public IActionResult PasswordChange()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> PasswordChange(PasswordChangeViewModel passwordChangeViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                AppUser appUser = await _userManager.FindByNameAsync(User.Identity.Name);
+                if (appUser != null)
+                {
+                    bool exits = await _userManager.CheckPasswordAsync(appUser, passwordChangeViewModel.PasswordOld);
+
+                    if (exits)
+                    {
+                        IdentityResult result = await _userManager.ChangePasswordAsync(appUser, passwordChangeViewModel.PasswordOld, passwordChangeViewModel.PasswordNew);
+
+                        if (result.Succeeded)
+                        {
+                            await _userManager.UpdateSecurityStampAsync(appUser); //SecurityStamp günlledik
+                            //Çıkış yaptırıp tekrar giriş yaptırdık kullanıcıyı yaptırmazsak securityStamp değiştiği için 30 dakika sonra kullanıcıyı sistemden atar.
+                            await _signInManager.SignOutAsync();
+                            await _signInManager.PasswordSignInAsync(appUser, passwordChangeViewModel.PasswordNew, true, false);
+                            ViewBag.success = "True";
+
+                        }
+                        else
+                        {
+                            foreach (var item in result.Errors)
+                            {
+                                ModelState.AddModelError("", item.Description);
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Eski şifreniz yanlış");
+                    }
+                }
+
+            }
+            return View(passwordChangeViewModel);
+        }
     }
 }
