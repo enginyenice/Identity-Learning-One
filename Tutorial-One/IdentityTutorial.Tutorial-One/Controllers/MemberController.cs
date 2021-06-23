@@ -136,5 +136,10 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             }
             return View(passwordChangeViewModel);
         }
+    
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }

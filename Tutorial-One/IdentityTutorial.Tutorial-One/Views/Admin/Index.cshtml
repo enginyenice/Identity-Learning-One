@@ -1,36 +1,6 @@
-﻿@model List<AppUser>
-@{
+﻿@{
     ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/AdminLayout.cshtml";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
 }
 
-<h1>Index</h1>
-
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>User Id</th>
-            <th>User Name</th>
-            <th>Email</th>
-        </tr>
-    </thead>
-    @if (Model.Count == 0)
-    {
-        <tr>
-            <td colspan="3">Hiç bir üye yoktur</td>
-        </tr>
-    }
-    else
-    {
-        @foreach (var user in Model)
-        {
-            <tr>
-                <td>@user.Id</td>
-                <td>@user.UserName</td>
-                <td>@user.Email</td>
-            </tr>
-        }
-    }
-
-</table>
-
+<h1>Admin Sayfasına Hoş Geldiniz</h1>

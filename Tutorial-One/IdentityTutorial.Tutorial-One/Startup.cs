@@ -53,6 +53,7 @@ namespace IdentityTutorial.Tutorial_One
                 options.Password.RequireUppercase = false; // Büyük karakter girme zorunluluğuna gerek yok
                 options.Password.RequireDigit = false;  // Sayı girme zorunluluğuna gerek yok
 
+
             })
                 .AddPasswordValidator<CustomPasswordValidator>()//Custom password validator ekledik
                 .AddUserValidator<CustomUserValidator>()//Custom user validator ekledik.
@@ -88,6 +89,7 @@ namespace IdentityTutorial.Tutorial_One
                                                  //|-->Örneğin: 60 / 2 = 30. gün siteye girdiğinde 60 günlük daha cookie oluşturur.
                                                  //|SlidingExpiration = false cookie ömrü otomatik uzatılmaz.
                 options.ExpireTimeSpan = System.TimeSpan.FromDays(60); //Kaç gün kalmasını istiyoruz.
+                options.AccessDeniedPath = new PathString("/Member/AccessDenied"); // Kullanıcı yetkisi olmayan bir sayfaya tıklarsa bu sayfaya erişemediği ile ilgiyi bu path üzerinde göstereceğiz
 
 
             });
