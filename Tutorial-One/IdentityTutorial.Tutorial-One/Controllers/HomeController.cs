@@ -157,7 +157,7 @@ namespace IdentityTutorial.Tutorial_One.Controllers
                     },HttpContext.Request.Scheme);
 
                 Helper.PasswordReset.PasswordResetSendMail(passwordResetLink);
-                ViewBag.status = "successfull";
+                ViewBag.status = "success";
 
 
             } else
@@ -174,6 +174,39 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             TempData["token"] = token;
             return View();
 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPasswordConfirm([Bind("PasswordNew")]PasswordResetViewModel passwordResetViewModel)
+        {
+            string token  = TempData["token"].ToString();
+            string userId = TempData["userId"].ToString();
+
+            AppUser appUser = await _userManager.FindByIdAsync(userId);
+            if(appUser != null)
+            {
+                IdentityResult result = await _userManager.ResetPasswordAsync(appUser, token, passwordResetViewModel.PasswordNew);
+
+                if (result.Succeeded)
+                {
+                    await _userManager.UpdateSecurityStampAsync(appUser);
+                    ViewBag.status = "success";
+
+                } else
+                {
+                    foreach (var item in result.Errors)
+                    {
+
+                        ModelState.AddModelError("", item.Description);
+                    }
+                }
+
+            }
+            else
+            {
+                ModelState.AddModelError("", "Hata meydana geldi. Lütfen daha sonra tekrar deneyiniz....");
+            }
+            return View(passwordResetViewModel);
         }
     }
 }
