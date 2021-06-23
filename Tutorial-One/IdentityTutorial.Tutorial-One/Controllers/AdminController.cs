@@ -25,5 +25,33 @@ namespace IdentityTutorial.Tutorial_One.Controllers
         {
             return View(_userManager.Users.ToList());
         }
+
+        public IActionResult RoleCreate()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult RoleCreate(RoleViewModel roleViewModel)
+        {
+            AppRole appRole = new AppRole();
+            appRole.Name = roleViewModel.Name;
+            IdentityResult identityResult = _roleManager.CreateAsync(appRole).Result;
+            if (identityResult.Succeeded)
+            {
+                return RedirectToAction("Roles");
+            } else
+            {
+                AddModelError(identityResult);
+            }
+
+
+            return View(roleViewModel);
+        }
+
+        public IActionResult Roles()
+        {
+            return View(_roleManager.Roles.ToList());
+        }
     }
 }
