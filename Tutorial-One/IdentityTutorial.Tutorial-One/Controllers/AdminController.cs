@@ -66,11 +66,11 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             }
             return RedirectToAction("Roles");
         }
-    
+
         public IActionResult RoleUpdate(string id)
         {
             AppRole appRole = _roleManager.FindByIdAsync(id).Result;
-            if(appRole == null)
+            if (appRole == null)
             {
                 return RedirectToAction("Roles");
             }
@@ -82,7 +82,7 @@ namespace IdentityTutorial.Tutorial_One.Controllers
         {
             AppRole appRole = _roleManager.FindByIdAsync(roleViewModel.Id).Result;
 
-            if(appRole != null)
+            if (appRole != null)
             {
                 appRole.Name = roleViewModel.Name;
                 IdentityResult result = _roleManager.UpdateAsync(appRole).Result;
@@ -101,5 +101,51 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             return View(roleViewModel);
         }
 
+        public IActionResult RoleAssign(string id)
+        {
+            TempData["userId"] = id;
+            AppUser appUser = _userManager.FindByIdAsync(id).Result;
+            ViewBag.userName = appUser.UserName;
+            IQueryable<AppRole> roles = _roleManager.Roles;
+            List<string> appUserRoles = _userManager.GetRolesAsync(appUser).Result as List<string>; // Kullanıcının sahip olduğu roller
+            List<RoleAssignViewModel> roleAssignViewModels = new List<RoleAssignViewModel>();
+            foreach (var role in roles)
+            {
+                RoleAssignViewModel roleAssignViewModel = new RoleAssignViewModel();
+                roleAssignViewModel.RoleId = role.Id;
+                roleAssignViewModel.RoleName = role.Name;
+                if (appUserRoles.Contains(role.Name))
+                {
+                    roleAssignViewModel.Exist = true;
+                }
+                roleAssignViewModels.Add(roleAssignViewModel);
+            }
+
+
+            return View(roleAssignViewModels);
+
+
+
+
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> RoleAssign(List<RoleAssignViewModel> roleAssignViewModels)
+        {
+            AppUser appUser = _userManager.FindByIdAsync(TempData["userId"].ToString()).Result;
+            foreach (var item in roleAssignViewModels)
+            {
+                if (item.Exist)
+                {
+                    await _userManager.AddToRoleAsync(appUser, item.RoleName);
+                } else
+                {
+                    await _userManager.RemoveFromRoleAsync(appUser, item.RoleName);
+                }
+            }
+
+            return RedirectToAction("Users");
+        }
     }
 }
