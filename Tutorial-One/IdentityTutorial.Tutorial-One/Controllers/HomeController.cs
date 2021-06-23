@@ -138,5 +138,25 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             }
             return View(user);
         }
+    
+        public IActionResult ResetPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ResetPassword(PasswordResetViewModel passwordResetViewModel)
+        {
+            AppUser user = _userManager.FindByEmailAsync(passwordResetViewModel.Email).Result;
+            if(user != null)
+            {
+                string passwordResetToken = _userManager.GeneratePasswordResetTokenAsync(user).Result;
+
+
+            }
+
+            return View();
+        }
+
     }
 }
