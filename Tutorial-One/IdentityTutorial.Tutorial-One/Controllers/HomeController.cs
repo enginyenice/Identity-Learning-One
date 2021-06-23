@@ -168,5 +168,12 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             return View(passwordResetViewModel);
         }
 
+        public IActionResult ResetPasswordConfirm(string userId,string token)
+        {
+            TempData["userId"] = userId;
+            TempData["token"] = token;
+            return View();
+
+        }
     }
 }
