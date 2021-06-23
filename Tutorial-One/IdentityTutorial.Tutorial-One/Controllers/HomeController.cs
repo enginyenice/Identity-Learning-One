@@ -151,11 +151,21 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             if(user != null)
             {
                 string passwordResetToken = _userManager.GeneratePasswordResetTokenAsync(user).Result;
+                string passwordResetLink = Url.Action("ResetPasswordConfirm","Home",new { 
+                    userId= user.Id,
+                    token = passwordResetToken
+                    },HttpContext.Request.Scheme);
+
+                Helper.PasswordReset.PasswordResetSendMail(passwordResetLink);
+                ViewBag.status = "successfull";
 
 
+            } else
+            {
+                ModelState.AddModelError("","Sistemde kayıtlı bir email adresi bulunamadı");
             }
 
-            return View();
+            return View(passwordResetViewModel);
         }
 
     }
