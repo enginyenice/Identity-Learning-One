@@ -7,7 +7,7 @@ namespace IdentityTutorial.Tutorial_One.Enums
 {
     public enum Gender
     {
-        Belirtilmemis=0,
+        Belirtilmemiş = 0,
         Erkek=1,
         Kadın=2
     }

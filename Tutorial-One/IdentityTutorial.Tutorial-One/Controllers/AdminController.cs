@@ -1,6 +1,7 @@
 ﻿using IdentityTutorial.Tutorial_One.Models;
 using IdentityTutorial.Tutorial_One.ViewModels;
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace IdentityTutorial.Tutorial_One.Controllers
 {
+    [Authorize(Roles ="Admin")]
     public class AdminController : BaseController
     {
 
