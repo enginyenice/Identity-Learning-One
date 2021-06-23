@@ -16,20 +16,16 @@ using System.Threading.Tasks;
 namespace IdentityTutorial.Tutorial_One.Controllers
 {
     [Authorize]
-    public class MemberController : Controller
+    public class MemberController : BaseController
     {
-        private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;
 
-        public MemberController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public MemberController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager) : base(userManager,signInManager)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
         }
 
         public IActionResult Index()
         {
-            AppUser appUser = _userManager.FindByNameAsync(User.Identity.Name).Result;
+            AppUser appUser = CurrentUser;
             UserViewModel userViewModel = appUser.Adapt<UserViewModel>(); // AppUser ı UserViewModel Mappledik. (Mapster paketi kullandık)
             return View(userViewModel);
         }
@@ -42,11 +38,11 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             _signInManager.SignOutAsync();
         }
 
-        public async Task<IActionResult> UserEdit()
+        public IActionResult UserEdit()
         {
 
 
-            AppUser appUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            AppUser appUser = CurrentUser;
             UserViewModel userViewModel = appUser.Adapt<UserViewModel>();
             ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
 
@@ -59,7 +55,7 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             ModelState.Remove("Password");
             if (ModelState.IsValid)
             {
-                AppUser appUser = await _userManager.FindByNameAsync(User.Identity.Name);
+                AppUser appUser = CurrentUser;
 
                 if (userPicture != null && userPicture.Length > 0)
                 {
@@ -91,10 +87,7 @@ namespace IdentityTutorial.Tutorial_One.Controllers
 
                 } else
                 {
-                    foreach (var item in result.Errors)
-                    {
-                        ModelState.AddModelError("", item.Description);
-                    }
+                    AddModelError(result);
                 }
             }
 
@@ -110,7 +103,7 @@ namespace IdentityTutorial.Tutorial_One.Controllers
         {
             if (ModelState.IsValid)
             {
-                AppUser appUser = await _userManager.FindByNameAsync(User.Identity.Name);
+                AppUser appUser = CurrentUser;
                 if (appUser != null)
                 {
                     bool exits = await _userManager.CheckPasswordAsync(appUser, passwordChangeViewModel.PasswordOld);
@@ -130,10 +123,7 @@ namespace IdentityTutorial.Tutorial_One.Controllers
                         }
                         else
                         {
-                            foreach (var item in result.Errors)
-                            {
-                                ModelState.AddModelError("", item.Description);
-                            }
+                            AddModelError(result);
 
                         }
                     }
