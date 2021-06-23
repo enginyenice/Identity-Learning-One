@@ -1,5 +1,7 @@
-﻿using IdentityTutorial.Tutorial_One.CustomValidation;
+﻿using IdentityTutorial.Tutorial_One.ClaimProviders;
+using IdentityTutorial.Tutorial_One.CustomValidation;
 using IdentityTutorial.Tutorial_One.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -38,6 +40,18 @@ namespace IdentityTutorial.Tutorial_One
 
                 options.UseSqlServer(Configuration.GetConnectionString("SqlServer"));
             });
+
+
+            //Claim bazlı yetkilendirmede işlemler policy üzerinden yürüyor
+            services.AddAuthorization(option =>
+            {
+                option.AddPolicy("EskisehirPolicy", policy =>
+                {
+                    policy.RequireClaim("city", "Eskişehir");
+                });
+            });
+            
+            
             services.AddIdentity<AppUser, AppRole>(options =>
             {
 
@@ -93,7 +107,7 @@ namespace IdentityTutorial.Tutorial_One
 
 
             });
-
+            services.AddScoped<IClaimsTransformation, ClaimProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

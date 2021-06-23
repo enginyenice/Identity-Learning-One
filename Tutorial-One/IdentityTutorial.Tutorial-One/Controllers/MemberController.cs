@@ -154,6 +154,12 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             return View();
         }
 
+        [Authorize(Policy = "EskisehirPolicy")]
+        public IActionResult EskisehirPage()
+        {
+            return View();
+        }
+
 
     }
 }
