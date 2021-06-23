@@ -29,7 +29,15 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             UserViewModel userViewModel = appUser.Adapt<UserViewModel>(); // AppUser ı UserViewModel Mappledik. (Mapster paketi kullandık)
             return View(userViewModel);
         }
-     
+
+
+
+
+        public void LogOut()
+        {
+            _signInManager.SignOutAsync();
+        }
+
         public async Task<IActionResult> UserEdit()
         {
             AppUser appUser = await _userManager.FindByNameAsync(User.Identity.Name);
@@ -71,9 +79,6 @@ namespace IdentityTutorial.Tutorial_One.Controllers
 
             return View(userViewModel);
         }
-
-
-
 
         public IActionResult PasswordChange()
         {

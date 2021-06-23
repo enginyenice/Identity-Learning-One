@@ -81,6 +81,7 @@ namespace IdentityTutorial.Tutorial_One
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = new PathString("/Home/LogIn"); //Kullanıcıların göreceği bir sayfaya cookiesiz bir istek geldiğinde nereye yönlendirileceğini belirtiyoruz.
+                options.LogoutPath = new PathString("/Member/LogOut");
                 options.Cookie = cookieBuilder; // Tasarladığımız cookieBuilder'i verdik
                 options.SlidingExpiration = true;//Kullanıcıya verdiğimiz cookie nin ömrünü vermiştik.
                                                  //|SlidingExpiration = true kullanıcı cookieBuilder.Expiration tarihinin yarısa geldiğinde tekrar Expiration kadar gün cookie oluşturma isteği verir.
