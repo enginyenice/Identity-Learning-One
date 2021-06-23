@@ -11,10 +11,10 @@ namespace IdentityTutorial.Tutorial_One.Controllers
 {
     public class AdminController : BaseController
     {
-        
-        public AdminController(UserManager<AppUser> userManager,RoleManager<AppRole> roleManager) : base(userManager,null,roleManager)
+
+        public AdminController(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager) : base(userManager, null, roleManager)
         {
-            
+
         }
 
         public IActionResult Index()
@@ -40,7 +40,8 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             if (identityResult.Succeeded)
             {
                 return RedirectToAction("Roles");
-            } else
+            }
+            else
             {
                 AddModelError(identityResult);
             }
@@ -52,6 +53,17 @@ namespace IdentityTutorial.Tutorial_One.Controllers
         public IActionResult Roles()
         {
             return View(_roleManager.Roles.ToList());
+        }
+
+        [HttpPost]
+        public IActionResult RoleDelete(string id)
+        {
+            AppRole appRole = _roleManager.FindByIdAsync(id).Result;
+            if (appRole != null)
+            {
+                IdentityResult result = _roleManager.DeleteAsync(appRole).Result;
+            }
+            return RedirectToAction("Roles");
         }
     }
 }
