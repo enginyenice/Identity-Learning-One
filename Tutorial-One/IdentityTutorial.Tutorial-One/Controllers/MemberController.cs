@@ -29,6 +29,52 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             UserViewModel userViewModel = appUser.Adapt<UserViewModel>(); // AppUser ı UserViewModel Mappledik. (Mapster paketi kullandık)
             return View(userViewModel);
         }
+     
+        public async Task<IActionResult> UserEdit()
+        {
+            AppUser appUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            UserViewModel userViewModel = appUser.Adapt<UserViewModel>();
+
+
+            return View(userViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UserEdit(UserViewModel userViewModel)
+        {
+            ModelState.Remove("Password");
+            if (ModelState.IsValid)
+            {
+                AppUser appUser = await _userManager.FindByNameAsync(User.Identity.Name);
+                appUser.UserName = userViewModel.UserName;
+                appUser.Email = userViewModel.Email;
+                appUser.PhoneNumber = userViewModel.PhoneNumber;
+
+                IdentityResult result = await _userManager.UpdateAsync(appUser);
+                if (result.Succeeded)
+                {
+
+                    await _userManager.UpdateSecurityStampAsync(appUser); //SecurityStamp günlledik
+                                                                          //Çıkış yaptırıp tekrar giriş yaptırdık kullanıcıyı yaptırmazsak securityStamp değiştiği için 30 dakika sonra kullanıcıyı sistemden atar.
+                    await _signInManager.SignOutAsync();
+                    await _signInManager.SignInAsync(appUser,true);
+                    ViewBag.success = "True";
+
+                } else
+                {
+                    foreach (var item in result.Errors)
+                    {
+                        ModelState.AddModelError("", item.Description);
+                    }
+                }
+            }
+
+            return View(userViewModel);
+        }
+
+
+
+
         public IActionResult PasswordChange()
         {
             return View();

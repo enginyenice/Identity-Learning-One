@@ -25,11 +25,16 @@ namespace IdentityTutorial.Tutorial_One.Controllers
 
         public IActionResult Index()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Member");
+            }
             return View();
         }
 
         public IActionResult Privacy()
         {
+
             return View();
         }
 
