@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace IdentityTutorial.Tutorial_One.Controllers
 {
-    [Authorize(Roles ="Admin")]
+    //[Authorize(Roles ="Admin")]
     public class AdminController : BaseController
     {
 

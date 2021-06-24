@@ -35,10 +35,9 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View();
         }
 
         public IActionResult LogIn(string ReturnUrl)
@@ -277,8 +276,9 @@ namespace IdentityTutorial.Tutorial_One.Controllers
                     {
                         IdentityResult loginResult = await _userManager.AddLoginAsync(appUser,info);
                         if (loginResult.Succeeded)
-                        {
-                            await _signInManager.SignInAsync(appUser, true);
+                        {   
+                            //External Login işlemi yaptık
+                            await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, true);
                             return Redirect(ReturnUrl);
                         } else
                         {
@@ -297,7 +297,8 @@ namespace IdentityTutorial.Tutorial_One.Controllers
 
                 }
 
-                return RedirectToAction("Error");
+                List<string> errors = ModelState.Values.SelectMany(p => p.Errors).Select(x => x.ErrorMessage).ToList();
+                return View("Error",errors);
             }
 
         }

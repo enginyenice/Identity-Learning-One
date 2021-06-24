@@ -1,0 +1,19 @@
+﻿
+@model List<string>
+@{
+    ViewData["Title"] = "Error";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Hata meydana geldi</h3>
+<hr />
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in Model)
+            {
+
+                <li>@error</li>
+
+            }
+        </ul>
+    </div>
