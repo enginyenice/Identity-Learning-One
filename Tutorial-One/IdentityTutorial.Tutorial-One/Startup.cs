@@ -49,6 +49,10 @@ namespace IdentityTutorial.Tutorial_One
                 {
                     policy.RequireClaim("city", "Eskişehir");
                 });
+                option.AddPolicy("ViolancePolicy", policy =>
+                {
+                    policy.RequireClaim("violance", true.ToString());
+                });
             });
             
             

@@ -137,8 +137,18 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             return View(passwordChangeViewModel);
         }
     
-        public IActionResult AccessDenied()
+        public IActionResult AccessDenied(string returnUrl)
         {
+            if (returnUrl.Contains("ViolancePage"))
+            {
+                ViewBag.message = "Erişmeye uğraştığınız sayfa şiddet videoları içerdiğinden dolayı 15 yaşından büyük olmanız gerekmektedir.";
+            } else if(returnUrl.Contains("EskisehirPage"))
+            {
+                ViewBag.message = "Eskişehir'li olmayanlar giremez!";
+            } else
+            {
+                ViewBag.message = "Bu sayfaya erişiminiz yoktur.";
+            }
             return View();
         }
    
@@ -160,6 +170,10 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             return View();
         }
 
-
+        [Authorize(Policy = "ViolancePolicy")]
+        public IActionResult ViolancePage()
+        {
+            return View();
+        }
     }
 }

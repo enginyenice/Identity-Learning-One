@@ -32,10 +32,6 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Member" asp-action="Manager">Manager Anasayfa</a>
                         </li>
-
-                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Member" asp-action="EskisehirPage">Eskişehir Sayfası</a>
-                        </li>
                     </ul>
                 </div>
             </div>
@@ -49,6 +45,11 @@
                 </div>
                 <div class="col col-4">
                     <h3>Menü</h3>
+
+
+
+                    <a class="btn btn-primary btn-block" asp-controller="Member" asp-action="EskisehirPage">Eskişehir Sayfası</a>
+                    <a class="btn btn-primary btn-block" asp-controller="Member" asp-action="ViolancePage">Şiddet İçerikli Sayfası</a>
                     <a class="btn btn-primary btn-block" asp-action="PasswordChange" asp-controller="Member">Şifre değiştirme</a>
                     <a class="btn btn-primary btn-block" asp-action="UserEdit" asp-controller="Member">Bilgi değiştirme</a>
                     <a class="btn btn-primary btn-block" asp-action="LogOut" asp-controller="Member" asp-route-returnUrl="/Home/Index">Çıkış Yap</a>

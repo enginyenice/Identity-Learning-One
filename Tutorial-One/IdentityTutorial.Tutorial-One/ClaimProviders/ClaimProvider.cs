@@ -26,6 +26,19 @@ namespace IdentityTutorial.Tutorial_One.ClaimProviders
             {//Üye bir kullanıcı
                 ClaimsIdentity claimsIdentity = principal.Identity as ClaimsIdentity;
                 AppUser appUser = await _userManager.FindByNameAsync(claimsIdentity.Name);
+                
+                //15 yaşından büyük mü ? 
+                if(appUser.BirthDay != null)
+                {
+                    var today = DateTime.Now;
+                    var age = today.Year - appUser.BirthDay?.Year;
+                    if(age > 15)
+                    {
+                        Claim violanceClaim = new Claim("violance", true.ToString(), ClaimValueTypes.String, "Internal");
+                        claimsIdentity.AddClaim(violanceClaim);
+                    }
+
+                }
                 if (appUser != null)
                 {
                     if (appUser.City != null)
