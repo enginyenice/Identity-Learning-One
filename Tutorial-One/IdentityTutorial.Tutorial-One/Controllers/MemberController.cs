@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace IdentityTutorial.Tutorial_One.Controllers
@@ -19,7 +20,7 @@ namespace IdentityTutorial.Tutorial_One.Controllers
     public class MemberController : BaseController
     {
 
-        public MemberController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager) : base(userManager,signInManager)
+        public MemberController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager) : base(userManager, signInManager)
         {
         }
 
@@ -61,13 +62,13 @@ namespace IdentityTutorial.Tutorial_One.Controllers
                 {
                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(userPicture.FileName);
                     var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserPicture", fileName);
-                    using (var stream = new FileStream(path,FileMode.Create))
+                    using (var stream = new FileStream(path, FileMode.Create))
                     {
                         await userPicture.CopyToAsync(stream);
                         appUser.Picture = "/UserPicture/" + fileName;
                     }
                 }
-                
+
                 appUser.UserName = userViewModel.UserName;
                 appUser.Email = userViewModel.Email;
                 appUser.PhoneNumber = userViewModel.PhoneNumber;
@@ -82,10 +83,11 @@ namespace IdentityTutorial.Tutorial_One.Controllers
                     await _userManager.UpdateSecurityStampAsync(appUser); //SecurityStamp günlledik
                                                                           //Çıkış yaptırıp tekrar giriş yaptırdık kullanıcıyı yaptırmazsak securityStamp değiştiği için 30 dakika sonra kullanıcıyı sistemden atar.
                     await _signInManager.SignOutAsync();
-                    await _signInManager.SignInAsync(appUser,true);
+                    await _signInManager.SignInAsync(appUser, true);
                     ViewBag.success = "True";
 
-                } else
+                }
+                else
                 {
                     AddModelError(result);
                 }
@@ -136,23 +138,25 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             }
             return View(passwordChangeViewModel);
         }
-    
+
         public IActionResult AccessDenied(string returnUrl)
         {
             if (returnUrl.Contains("ViolancePage"))
             {
                 ViewBag.message = "Erişmeye uğraştığınız sayfa şiddet videoları içerdiğinden dolayı 15 yaşından büyük olmanız gerekmektedir.";
-            } else if(returnUrl.Contains("EskisehirPage"))
+            }
+            else if (returnUrl.Contains("EskisehirPage"))
             {
                 ViewBag.message = "Eskişehir'li olmayanlar giremez!";
-            } else
+            }
+            else
             {
                 ViewBag.message = "Bu sayfaya erişiminiz yoktur.";
             }
             return View();
         }
-   
-    
+
+
         [Authorize(Roles = "Editör,Admin")]
         public IActionResult Editor()
         {
@@ -172,6 +176,32 @@ namespace IdentityTutorial.Tutorial_One.Controllers
 
         [Authorize(Policy = "ViolancePolicy")]
         public IActionResult ViolancePage()
+        {
+            return View();
+        }
+
+
+        public async Task<IActionResult> ExchangeRedirect()
+        {
+
+            bool result = User.HasClaim(x => x.Type == "ExpireDateExchange");
+            if (!result)
+            {
+                //30 gün ileri tarihi tutan bir claim oluşturduk
+                Claim ExpireDateExchange = new Claim("ExpireDateExchange", DateTime.Now.AddDays(30).ToShortDateString(), ClaimValueTypes.String, "Internal");
+                //Kullanıcıya claim ekledik
+                await _userManager.AddClaimAsync(CurrentUser , ExpireDateExchange);
+                //Cookie güncellensin diye giriş çıkış yaptırıyoruz.
+                await _signInManager.SignOutAsync();
+                await _signInManager.SignInAsync(CurrentUser, true);
+            }
+
+
+            return Redirect("Exchange");
+        }
+
+        [Authorize(Policy = "ExchangePolicy")]
+        public IActionResult Exchange()
         {
             return View();
         }

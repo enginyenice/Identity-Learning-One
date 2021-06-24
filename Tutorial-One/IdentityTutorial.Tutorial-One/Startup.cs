@@ -1,7 +1,9 @@
 ﻿using IdentityTutorial.Tutorial_One.ClaimProviders;
 using IdentityTutorial.Tutorial_One.CustomValidation;
 using IdentityTutorial.Tutorial_One.Models;
+using IdentityTutorial.Tutorial_One.Requirements;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -33,6 +35,8 @@ namespace IdentityTutorial.Tutorial_One
 
 
 
+            //Her IAuthorizationRequirement interfacei ile karşılaştığı zaman nesne örneği oluştursun.
+            services.AddTransient<IAuthorizationRequirement, ExpireDateExchangeRequirement>();
 
             services.AddControllersWithViews();
             services.AddDbContext<AppIdentityDbContext>(options =>
@@ -52,6 +56,9 @@ namespace IdentityTutorial.Tutorial_One
                 option.AddPolicy("ViolancePolicy", policy =>
                 {
                     policy.RequireClaim("violance", true.ToString());
+                });
+                option.AddPolicy("ExchangePolicy", policy => {
+                    policy.AddRequirements(new ExpireDateExchangeRequirement());
                 });
             });
             
