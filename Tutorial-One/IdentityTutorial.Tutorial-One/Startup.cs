@@ -73,6 +73,11 @@ namespace IdentityTutorial.Tutorial_One
                 options.ClientId = Configuration["Authentication:GooleClientID"];
                 options.ClientSecret = Configuration["Authentication:GoogleClientSecret"];
 
+            }).AddMicrosoftAccount(options =>
+            {
+                options.ClientId = Configuration["Authentication:MicrosoftClientID"];
+                options.ClientSecret = Configuration["Authentication:MicrosoftClientSecret"];
+
             });
 
             services.AddIdentity<AppUser, AppRole>(options =>
