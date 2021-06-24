@@ -1,4 +1,5 @@
-﻿using IdentityTutorial.Tutorial_One.Models;
+﻿using IdentityTutorial.Tutorial_One.Helper;
+using IdentityTutorial.Tutorial_One.Models;
 using IdentityTutorial.Tutorial_One.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -60,7 +61,11 @@ namespace IdentityTutorial.Tutorial_One.Controllers
                         ModelState.AddModelError("", "Hesabınız bir süreliğine kilitlenmiştir. Lütfen daha sonra tekrar deneyiniz");
                         return View(user);
                     }
-
+                    if(await _userManager.IsEmailConfirmedAsync(appUser) == false)
+                    {
+                        ModelState.AddModelError("", "Lütfen eposta adresinize gönderilen mail üzerinden hesabınızı aktif ediniz.");
+                        return View(user);
+                    }
 
 
                     //Eski bir cookie varsa silelim
@@ -123,6 +128,15 @@ namespace IdentityTutorial.Tutorial_One.Controllers
                 IdentityResult identityResult = await _userManager.CreateAsync(appUser, user.Password);
                 if (identityResult.Succeeded)
                 {
+                    string confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
+                    string link = Url.Action("ConfirmEmail", "Home", new
+                    {
+                        userId = appUser.Id,
+                        token = confirmationToken
+                    },HttpContext.Request.Scheme);
+                    EmailConfirmation.EmailConfirmationSendMail(link, user.Email);
+
+
                     return RedirectToAction("LogIn");
                 }
                 else
@@ -153,7 +167,7 @@ namespace IdentityTutorial.Tutorial_One.Controllers
                     token = passwordResetToken
                     },HttpContext.Request.Scheme);
 
-                Helper.PasswordReset.PasswordResetSendMail(passwordResetLink);
+                Helper.PasswordReset.PasswordResetSendMail(passwordResetLink,user.Email);
                 ViewBag.status = "success";
 
 
@@ -201,5 +215,23 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             }
             return View(passwordResetViewModel);
         }
+
+
+
+        public async Task<IActionResult> ConfirmEmail(string userId,string token)
+        {
+            var appUser = await _userManager.FindByIdAsync(userId);
+            IdentityResult result = await _userManager.ConfirmEmailAsync(appUser, token);
+            if(result.Succeeded)
+            {
+                ViewBag.status = "Email adresiniz onaylanmıştır. Login ekranından giriş yapabilirsiniz";
+            } else
+            {
+                ViewBag.status = "Bir hata meydana geldi. Lütfen daha sonra tekrar deneyiniz.";
+            }
+
+            return View();
+        }
+
     }
 }

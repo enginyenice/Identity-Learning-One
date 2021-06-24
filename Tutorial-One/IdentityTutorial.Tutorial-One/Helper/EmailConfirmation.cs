@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace IdentityTutorial.Tutorial_One.Helper
 {
-    public static class PasswordReset
+    public static class EmailConfirmation
     {
-        public static void PasswordResetSendMail(string link,string email)
+
+        public static void EmailConfirmationSendMail(string link, string email)
         {
             //"test@enginyenice.com", "Qsj^ZTP0yWE6_*$%"
             MailMessage mailMessage = new MailMessage();
@@ -16,9 +17,9 @@ namespace IdentityTutorial.Tutorial_One.Helper
 
             mailMessage.From = new MailAddress("test@enginyenice.com");
             mailMessage.To.Add(email);
-            mailMessage.Subject = $"xxx.xxx Şifre Sıfırlama";
-            mailMessage.Body = "<h2>Şifrenizi yenilemek için lütfen aşağıdaki linke tıklayınız</h2><hr/>";
-            mailMessage.Body += $"<a href='{link}'>Şifre Yenileme Linki</a>";
+            mailMessage.Subject = $"xxx.xxx Email Doğrulama";
+            mailMessage.Body = "<h2>Hesabınızı doğrulamak için lütfen aşağıdaki linke tıklayınız</h2><hr/>";
+            mailMessage.Body += $"<a href='{link}'>Doğrulama Linki</a>";
             mailMessage.IsBodyHtml = true;
 
             smtpClient.Port = 587;
