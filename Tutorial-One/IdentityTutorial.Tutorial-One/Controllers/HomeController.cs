@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace IdentityTutorial.Tutorial_One.Controllers
@@ -231,6 +232,74 @@ namespace IdentityTutorial.Tutorial_One.Controllers
             }
 
             return View();
+        }
+
+        public IActionResult FacebookLogin(string ReturnUrl)
+        {
+            string RedirectUrl = Url.Action("ExternalResponse", "Home",new { 
+            ReturnUrl = ReturnUrl
+            });
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties("Facebook", RedirectUrl);
+
+            return new ChallengeResult("Facebook", properties);
+        }
+
+        public async Task<IActionResult> ExternalResponse(string ReturnUrl="/")
+        {
+            ExternalLoginInfo info = await _signInManager.GetExternalLoginInfoAsync();
+            if(info == null)
+            {
+                return RedirectToAction("LogIn");
+            } else
+            {
+                Microsoft.AspNetCore.Identity.SignInResult signInResult =  await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, true);
+                if (signInResult.Succeeded)
+                {
+                    return Redirect(ReturnUrl);
+                } else
+                {
+                    AppUser appUser = new AppUser();
+                    appUser.Email = info.Principal.FindFirst(ClaimTypes.Email).Value;
+                    string externalUserId = info.Principal.FindFirst(ClaimTypes.NameIdentifier).Value;
+                    if(info.Principal.HasClaim(p => p.Type == ClaimTypes.Name))
+                    {
+                        string userName = info.Principal.FindFirst(ClaimTypes.Name).Value;
+                        userName = userName.Replace(' ', '-').ToLower() + externalUserId.Substring(0, 5).ToString();
+                        appUser.UserName = userName;
+                    } else
+                    {
+                        string userName = info.Principal.FindFirst(ClaimTypes.Email).Value;
+                        appUser.UserName = userName;
+                    }
+
+                    IdentityResult createResult = await _userManager.CreateAsync(appUser);
+                    if(createResult.Succeeded)
+                    {
+                        IdentityResult loginResult = await _userManager.AddLoginAsync(appUser,info);
+                        if (loginResult.Succeeded)
+                        {
+                            await _signInManager.SignInAsync(appUser, true);
+                            return Redirect(ReturnUrl);
+                        } else
+                        {
+                            AddModelError(loginResult);
+                        }
+                        
+                    } else
+                    {
+                        AddModelError(createResult);
+                    }
+
+
+
+
+
+
+                }
+
+                return RedirectToAction("Error");
+            }
+
         }
 
     }

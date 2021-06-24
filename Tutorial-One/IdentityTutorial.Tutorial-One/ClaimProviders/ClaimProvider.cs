@@ -28,7 +28,7 @@ namespace IdentityTutorial.Tutorial_One.ClaimProviders
                 AppUser appUser = await _userManager.FindByNameAsync(claimsIdentity.Name);
                 
                 //15 yaşından büyük mü ? 
-                if(appUser.BirthDay != null)
+                if(appUser != null && appUser.BirthDay != null )
                 {
                     var today = DateTime.Now;
                     var age = today.Year - appUser.BirthDay?.Year;

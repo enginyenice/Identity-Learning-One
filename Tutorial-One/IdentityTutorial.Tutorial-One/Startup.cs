@@ -61,7 +61,13 @@ namespace IdentityTutorial.Tutorial_One
                     policy.AddRequirements(new ExpireDateExchangeRequirement());
                 });
             });
-            
+
+
+            services.AddAuthentication().AddFacebook(options =>
+            {
+                options.AppId = Configuration["Authentication:FacebookAppId"];
+                options.AppSecret = Configuration["Authentication:FacebookAppSecret"];
+            });
             
             services.AddIdentity<AppUser, AppRole>(options =>
             {
