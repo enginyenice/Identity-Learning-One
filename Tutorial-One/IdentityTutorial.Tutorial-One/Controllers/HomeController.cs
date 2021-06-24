@@ -242,6 +242,16 @@ namespace IdentityTutorial.Tutorial_One.Controllers
 
             return new ChallengeResult("Facebook", properties);
         }
+        public IActionResult GoogleLogin(string ReturnUrl)
+        {
+            string RedirectUrl = Url.Action("ExternalResponse", "Home", new
+            {
+                ReturnUrl = ReturnUrl
+            });
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", RedirectUrl);
+
+            return new ChallengeResult("Google", properties);
+        }
 
         public async Task<IActionResult> ExternalResponse(string ReturnUrl="/")
         {

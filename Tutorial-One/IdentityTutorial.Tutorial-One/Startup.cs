@@ -57,7 +57,8 @@ namespace IdentityTutorial.Tutorial_One
                 {
                     policy.RequireClaim("violance", true.ToString());
                 });
-                option.AddPolicy("ExchangePolicy", policy => {
+                option.AddPolicy("ExchangePolicy", policy =>
+                {
                     policy.AddRequirements(new ExpireDateExchangeRequirement());
                 });
             });
@@ -67,8 +68,13 @@ namespace IdentityTutorial.Tutorial_One
             {
                 options.AppId = Configuration["Authentication:FacebookAppId"];
                 options.AppSecret = Configuration["Authentication:FacebookAppSecret"];
+            }).AddGoogle(options =>
+            {
+                options.ClientId = Configuration["Authentication:GooleClientID"];
+                options.ClientSecret = Configuration["Authentication:GoogleClientSecret"];
+
             });
-            
+
             services.AddIdentity<AppUser, AppRole>(options =>
             {
 
